@@ -212,10 +212,15 @@ function doAddStudent() {
 
 ```
 SRMS/
-├── index.html      # Full application UI — login, sidebar, all pages & modals
-├── style.css       # Dark-theme glassmorphism design system
-├── script.js       # All 5 design patterns + MVC logic (fully commented)
-└── README.md       # This file
+├── index.html   # Full application UI — login, sidebar, all pages & modals
+├── style.css    # Dark-theme glassmorphism design system
+├── script.js    # All 5 design patterns + MVC logic (fully commented)
+├── README.md    # Project documentation and setup guide
+│
+├── docs/
+│   ├── SRMS.pptx             # Project presentation slides
+│   ├── SRMS_Proposal.docx    # Initial project proposal
+│   └── SRMS_SRS.docx         # Software Requirements Specification (SRS)
 ```
 
 ---
