@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SRMS | EDU-CORE Portal</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <!-- LOGIN -->
+  <div id="login-overlay">
+    <div class="login-box">
+      <div class="login-logo-ring"><i class="fas fa-shield-halved"></i></div>
+      <h2>EDU-CORE Portal</h2>
+      <p>Student Result Management System · FAST-NUCES Karachi</p>
+      <div class="input-group"><label>User ID</label><input type="text" id="username" placeholder="admin or S001"
+          autocomplete="off" /></div>
+      <div class="input-group"><label>Password</label><input type="password" id="password" placeholder="••••••••" />
+      </div>
+      <button class="login-btn" onclick="checkLogin()"><i class="fas fa-arrow-right-to-bracket"></i> Sign In</button>
+      <div class="login-hint">Admin: <b>admin</b> / <b>admin123</b> &nbsp;|&nbsp; Student: <b>S001</b> / <b>123</b>
+      </div>
+    </div>
+  </div>
+  <!-- SIDEBAR -->
+  <nav class="sidebar" id="app-sidebar">
+    <div class="brand">
+      <div class="brand-icon"><i class="fas fa-graduation-cap"></i></div>
+      <div>
+        <h3>EDU-CORE</h3><span id="role-label">Loading...</span>
+      </div>
+    </div>
+    <div class="nav-section-label">Main Menu</div>
+    <div data-page="dashboard" class="nav-item active" onclick="navigate('dashboard')">
+      <div class="nav-icon"><i class="fas fa-grip"></i></div> Dashboard
+    </div>
+    <div data-page="students" class="nav-item admin-only" onclick="navigate('students')" style="display:none">
+      <div class="nav-icon"><i class="fas fa-users"></i></div> Students
+    </div>
+    <div data-page="rankings" class="nav-item" onclick="navigate('rankings')">
+      <div class="nav-icon"><i class="fas fa-trophy"></i></div> Rankings
+    </div>
+    <div data-page="courses" class="nav-item" onclick="navigate('courses')">
+      <div class="nav-icon"><i class="fas fa-book-bookmark"></i></div> Courses
+    </div>
+    <div data-page="results" class="nav-item admin-only" onclick="navigate('results')" style="display:none">
+      <div class="nav-icon"><i class="fas fa-clipboard-list"></i></div> Results
+    </div>
+    <div data-page="transcript" class="nav-item" onclick="navigate('transcript')">
+      <div class="nav-icon"><i class="fas fa-file-invoice"></i></div> Transcript
+    </div>
+    <div class="nav-spacer"></div>
+    <div class="nav-logout" onclick="logout()">
+      <div class="nav-icon"><i class="fas fa-power-off"></i></div> Logout
+    </div>
+  </nav>
+  <!-- MAIN -->
+  <main id="app-content">
+    <div class="top-bar">
+      <div class="welcome-block">
+        <p id="date-display"></p>
+        <h1 id="welcome-heading">Welcome Back</h1>
+      </div>
+      <div class="user-chip">
+        <div id="user-avatar">?</div><span id="user-display">User</span>
+      </div>
+    </div>
+    <!-- DASHBOARD -->
+    <div id="page-dashboard" class="page active">
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-card-icon"><i class="fas fa-users" style="color:#3b82f6"></i></div>
+          <p id="stat-students-label">Total Students</p>
+          <h2 id="stat-students">0</h2>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-icon"><i class="fas fa-book" style="color:#8b5cf6"></i></div>
+          <p>Courses</p>
+          <h2 id="stat-courses">0</h2>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-icon"><i class="fas fa-star" style="color:#f59e0b"></i></div>
+          <p id="avg-label">Avg GPA</p>
+          <h2 id="stat-avg">0.00</h2>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-icon"><i class="fas fa-clipboard-check" style="color:#10b981"></i></div>
+          <p>Total Results</p>
+          <h2 id="stat-results">0</h2>
+        </div>
+      </div>
+      <div class="content-card">
+        <div class="card-header">
+          <h3><i class="fas fa-clock-rotate-left"></i> Recent Performance</h3>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Student</th>
+              <th>Course</th>
+              <th>Marks</th>
+              <th>Grade</th>
+            </tr>
+          </thead>
+          <tbody id="recent-results-tbody">
+            <tr>
+              <td colspan="4" class="empty-state"><i class="fas fa-inbox"></i>No results yet</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <!-- STUDENTS (Admin) -->
+    <div id="page-students" class="page">
+      <div class="search-bar"><i class="fas fa-search"></i><input type="text" id="student-search"
+          placeholder="Search by name or ID..." oninput="renderStudentsTable()"></div>
+      <div class="content-card">
+        <div class="card-header">
+          <h3><i class="fas fa-users"></i> All Students</h3>
+          <button class="btn-primary" onclick="openModal('modal-add-student')"><i class="fas fa-plus"></i> Add
+            Student</button>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Dept</th>
+              <th>Batch</th>
+              <th>Results</th>
+              <th>GPA</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="students-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+    <!-- RANKINGS -->
+    <div id="page-rankings" class="page">
+      <div class="content-card">
+        <div class="card-header">
+          <h3><i class="fas fa-trophy"></i> Academic Leaderboard</h3>
+          <select id="rank-dept-filter" onchange="renderRankings()" class="filter-select">
+            <option value="">All Departments</option>
+            <option>CS</option>
+            <option>SE</option>
+            <option>AI</option>
+            <option>DS</option>
+          </select>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Student</th>
+              <th>Dept</th>
+              <th>Batch</th>
+              <th>Courses</th>
+              <th>GPA</th>
+            </tr>
+          </thead>
+          <tbody id="rankings-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+    <!-- COURSES -->
+    <div id="page-courses" class="page">
+      <div class="content-card">
+        <div class="card-header">
+          <h3><i class="fas fa-book-bookmark"></i> Course Catalog</h3>
+          <button class="btn-primary admin-only" onclick="openModal('modal-add-course')" style="display:none"><i
+              class="fas fa-plus"></i> Add Course</button>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Code</th>
+              <th>Course Name</th>
+              <th>Credits</th>
+              <th>Students</th>
+              <th>Avg Marks</th>
+            </tr>
+          </thead>
+          <tbody id="courses-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+    <!-- RESULTS (Admin) -->
+    <div id="page-results" class="page">
+      <div class="search-bar"><i class="fas fa-search"></i><input type="text" id="result-search"
+          placeholder="Search results..." oninput="renderResultsTable()"></div>
+      <div class="content-card">
+        <div class="card-header">
+          <h3><i class="fas fa-clipboard-list"></i> All Results</h3>
+          <button class="btn-primary" onclick="openModalResult()"><i class="fas fa-plus"></i> Enter Result</button>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Student</th>
+              <th>Course</th>
+              <th>Marks</th>
+              <th>Grade</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="results-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+    <!-- TRANSCRIPT -->
+    <div id="page-transcript" class="page">
+      <div id="transcript-view"></div>
+    </div>
+  </main>
+
+  <div class="toast-wrap" id="toast-wrap"></div>
+
+  <!-- MODAL: Add Student -->
+  <div class="modal-overlay" id="modal-add-student">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>👤 Add New Student</h3><button class="modal-close" onclick="closeModal('modal-add-student')">✕</button>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Student ID *</label><input id="s-id" placeholder="e.g. S007"></div>
+        <div class="form-group"><label>Full Name *</label><input id="s-name" placeholder="e.g. Ali Khan"></div>
+        <div class="form-group"><label>Email</label><input id="s-email" placeholder="student@nu.edu.pk"></div>
+        <div class="form-group"><label>Password *</label><input id="s-pass" type="password"
+            placeholder="Login password"></div>
+        <div class="form-group"><label>Department</label><select id="s-dept">
+            <option>CS</option>
+            <option>SE</option>
+            <option>AI</option>
+            <option>DS</option>
+          </select></div>
+        <div class="form-group"><label>Batch Year</label><input id="s-batch" placeholder="e.g. 2024"></div>
+      </div>
+      <div class="form-actions">
+        <button class="btn-primary" onclick="doAddStudent()"><i class="fas fa-save"></i> Save Student</button>
+        <button class="btn-ghost" onclick="closeModal('modal-add-student')">Cancel</button>
+      </div>
+    </div>
+  </div>
+  <!-- MODAL: Add Course -->
+  <div class="modal-overlay" id="modal-add-course">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>📚 Add New Course</h3><button class="modal-close" onclick="closeModal('modal-add-course')">✕</button>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Course Code *</label><input id="c-id" placeholder="e.g. CS401"></div>
+        <div class="form-group"><label>Course Name *</label><input id="c-name" placeholder="e.g. Operating Systems">
+        </div>
+        <div class="form-group"><label>Credit Hours</label><select id="c-credits">
+            <option>1</option>
+            <option>2</option>
+            <option selected>3</option>
+            <option>4</option>
+          </select></div>
+        <div class="form-group"><label>Department</label><select id="c-dept">
+            <option>CS</option>
+            <option>SE</option>
+            <option>AI</option>
+            <option>DS</option>
+          </select></div>
+      </div>
+      <div class="form-actions">
+        <button class="btn-primary" onclick="doAddCourse()"><i class="fas fa-save"></i> Save Course</button>
+        <button class="btn-ghost" onclick="closeModal('modal-add-course')">Cancel</button>
+      </div>
+    </div>
+  </div>
+  <!-- MODAL: Add Result -->
+  <div class="modal-overlay" id="modal-add-result">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>📝 Enter Result</h3><button class="modal-close" onclick="closeModal('modal-add-result')">✕</button>
+      </div>
+      <div class="form-row">
+        <div class="form-group full"><label>Student *</label><select id="r-student"></select></div>
+        <div class="form-group full"><label>Course *</label><select id="r-course"></select></div>
+        <div class="form-group"><label>Marks (0-100) *</label><input id="r-marks" type="number" min="0" max="100"
+            placeholder="e.g. 85" oninput="previewGrade()"></div>
+        <div class="form-group"><label>Semester</label><input id="r-semester" placeholder="Spring 2026"></div>
+      </div>
+      <div class="grade-preview" id="grade-preview"></div>
+      <div class="form-actions">
+        <button class="btn-primary" onclick="doAddResult()"><i class="fas fa-save"></i> Save Result</button>
+        <button class="btn-ghost" onclick="closeModal('modal-add-result')">Cancel</button>
+      </div>
+    </div>
+  </div>
+  <!-- MODAL: Edit Result -->
+  <div class="modal-overlay" id="modal-edit-result">
+    <div class="modal" style="max-width:380px">
+      <div class="modal-header">
+        <h3>✏️ Edit Marks</h3><button class="modal-close" onclick="closeModal('modal-edit-result')">✕</button>
+      </div>
+      <input type="hidden" id="edit-r-idx">
+      <div class="form-row">
+        <div class="form-group full"><label>New Marks (0-100)</label><input id="edit-r-marks" type="number" min="0"
+            max="100"></div>
+      </div>
+      <div class="form-actions">
+        <button class="btn-primary" onclick="doEditResult()"><i class="fas fa-save"></i> Update</button>
+        <button class="btn-ghost" onclick="closeModal('modal-edit-result')">Cancel</button>
+      </div>
+    </div>
+  </div>
+  <!-- MODAL: Confirm Delete -->
+  <div class="modal-overlay" id="modal-confirm">
+    <div class="modal" style="max-width:380px">
+      <div class="modal-header">
+        <h3>⚠️ Confirm Delete</h3><button class="modal-close" onclick="closeModal('modal-confirm')">✕</button>
+      </div>
+      <p id="confirm-msg" style="color:var(--muted);font-size:.9rem;margin-bottom:20px">Are you sure?</p>
+      <div class="form-actions">
+        <button class="btn-danger" onclick="doConfirmDelete()">Yes, Delete</button>
+        <button class="btn-ghost" onclick="closeModal('modal-confirm')">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
