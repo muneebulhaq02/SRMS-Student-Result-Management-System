@@ -211,7 +211,7 @@ function doAddStudent() {
 ## 📁 Project Structure
 
 ```
-SRMS/
+SRMS-Student-Result-Management-System/
 ├── index.html   # Full application UI — login, sidebar, all pages & modals
 ├── style.css    # Dark-theme glassmorphism design system
 ├── script.js    # All 5 design patterns + MVC logic (fully commented)
